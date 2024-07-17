@@ -10,6 +10,12 @@ type DistributedCache struct {
 	data  map[string][]byte
 }
 
+func NewDistribuetCache() DistributedCache {
+	return DistributedCache{
+		data: make(map[string][]byte),
+	}
+}
+
 func (d *DistributedCache) Get(key string) []byte {
 	d.mutex.Lock()
 	defer d.mutex.Unlock()
