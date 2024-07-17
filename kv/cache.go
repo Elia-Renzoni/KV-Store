@@ -6,14 +6,15 @@ import (
 )
 
 type DistributedCache struct {
-	mutex   sync.Mutex
-	data    map[string][]byte
-	printer chan<- string
+	mutex       sync.Mutex
+	data        map[string][]byte
+	valueStored chan<- []byte
 }
 
 func NewDistribuetCache() *DistributedCache {
 	return &DistributedCache{
-		data: make(map[string][]byte),
+		data:        make(map[string][]byte),
+		valueStored: make(chan<- []byte),
 	}
 }
 
@@ -32,6 +33,7 @@ func (d *DistributedCache) Set(key string, value []byte) {
 	defer d.mutex.Unlock()
 
 	d.data[key] = value
+	d.valueStored <- value
 }
 
 func (d *DistributedCache) Delete(key string) {
@@ -39,7 +41,6 @@ func (d *DistributedCache) Delete(key string) {
 	defer d.mutex.Unlock()
 
 	delete(d.data, key)
-
 }
 
 func (d *DistributedCache) PrintCache() {
@@ -49,5 +50,7 @@ func (d *DistributedCache) PrintCache() {
 	for key, value := range d.data {
 		fmt.Printf("Key = %v - Value = %v", key, value)
 	}
+}
 
+func (d *DistributedCache) GetAll() {
 }
