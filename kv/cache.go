@@ -7,18 +7,18 @@ import (
 
 type DistributedCache struct {
 	mutex       sync.Mutex
-	data        map[string][]byte
+	data        map[int][]byte
 	valueStored chan<- []byte
 }
 
 func NewDistribuetCache() *DistributedCache {
 	return &DistributedCache{
-		data:        make(map[string][]byte),
+		data:        make(map[int][]byte),
 		valueStored: make(chan<- []byte),
 	}
 }
 
-func (d *DistributedCache) Get(key string) []byte {
+func (d *DistributedCache) Get(key int) []byte {
 	d.mutex.Lock()
 	defer d.mutex.Unlock()
 
@@ -28,7 +28,7 @@ func (d *DistributedCache) Get(key string) []byte {
 	return nil
 }
 
-func (d *DistributedCache) Set(key string, value []byte) {
+func (d *DistributedCache) Set(key int, value []byte) {
 	d.mutex.Lock()
 	defer d.mutex.Unlock()
 
@@ -36,7 +36,7 @@ func (d *DistributedCache) Set(key string, value []byte) {
 	d.valueStored <- value
 }
 
-func (d *DistributedCache) Delete(key string) {
+func (d *DistributedCache) Delete(key int) {
 	d.mutex.Lock()
 	defer d.mutex.Unlock()
 
