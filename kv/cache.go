@@ -6,12 +6,13 @@ import (
 )
 
 type DistributedCache struct {
-	mutex sync.Mutex
-	data  map[string][]byte
+	mutex   sync.Mutex
+	data    map[string][]byte
+	printer chan<- string
 }
 
-func NewDistribuetCache() DistributedCache {
-	return DistributedCache{
+func NewDistribuetCache() *DistributedCache {
+	return &DistributedCache{
 		data: make(map[string][]byte),
 	}
 }
